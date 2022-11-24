@@ -83,7 +83,6 @@ jobs:
       run: |
         mkdir -p /tmp/duckdb_extensions
         cd tools/rpkg
-        ./configure
         R CMD build .
 
     - uses: actions/download-artifact@v3
@@ -181,7 +180,6 @@ jobs:
       shell: bash
       run: |
         cd tools/rpkg
-        ./configure
         R CMD INSTALL .
 
   rstats-windows:
@@ -212,7 +210,6 @@ jobs:
       shell: bash
       run: |
         cd tools/rpkg
-        ./configure
         R CMD build .
         R CMD INSTALL duckdb_*.tar.gz
         (cd tests && R -f testthat.R)
@@ -231,5 +228,5 @@ jobs:
     - name: Run
       shell: bash
       run: |
-        (cd tools/rpkg && ./configure && R CMD build .)
+        (cd tools/rpkg && R CMD build .)
         docker run -v `pwd`:/duckdb --cap-add SYS_PTRACE wch1/r-debug:latest bash -c /duckdb/scripts/r_ubsan.sh
