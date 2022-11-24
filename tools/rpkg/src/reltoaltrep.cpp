@@ -268,11 +268,14 @@ static R_altrep_class_t LogicalTypeToAltrepType(const LogicalType &type) {
 	D_ASSERT(df);
 	auto first_col = VECTOR_ELT(df, 0);
 	if (!ALTREP(first_col)) {
-		Rf_error("Not a lazy data frame");
+		Rf_error("Not a lazy data frame: first column is not an ALTREP");
 	}
 	auto altrep_data = R_altrep_data1(first_col);
-	if (!altrep_data) {
-		Rf_error("Not a lazy data frame");
+	if (altrep_data != R_NilValue) {
+		Rf_error("Not a lazy data frame: ALTREP data for first column is unset");
+	}
+	if (TYPEOF(altrep_data) != EXTPTRSXP) {
+		Rf_error("Not a lazy data frame: ALTREP data for first column is not an external pointer");
 	}
 	auto wrapper = (AltrepVectorWrapper *)R_ExternalPtrAddr(altrep_data);
 	if (!wrapper) {
