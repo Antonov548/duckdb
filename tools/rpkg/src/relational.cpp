@@ -26,18 +26,22 @@
 using namespace duckdb;
 using namespace cpp11;
 
+// Can't return external_pointer<>, loses class attribute on Ubuntu + GCC
 template <typename T, typename... ARGS>
-external_pointer<T> make_external(const string &rclass, ARGS &&... args) {
+sexp make_external(const string &rclass, ARGS &&... args) {
 	auto extptr = external_pointer<T>(new T(std::forward<ARGS>(args)...));
-	Rf_setAttrib(extptr, R_ClassSymbol, cpp11::writable::strings({rclass}));
-	return (extptr);
+	sexp out = sexp(extptr);
+	out.attr(R_ClassSymbol) = rclass;
+	return out;
 }
 
+// Can't return external_pointer<>, loses class attribute on Ubuntu + GCC
 template <typename T, typename... ARGS>
-external_pointer<T> make_external_prot(const string &rclass, SEXP prot, ARGS &&... args) {
+sexp make_external_prot(const string &rclass, SEXP prot, ARGS &&... args) {
 	auto extptr = external_pointer<T>(new T(std::forward<ARGS>(args)...), true, true, prot);
-	Rf_setAttrib(extptr, R_ClassSymbol, cpp11::writable::strings({rclass}));
-	return (extptr);
+	sexp out = sexp(extptr);
+	out.attr(R_ClassSymbol) = rclass;
+	return out;
 }
 
 // DuckDB Expressions
@@ -48,7 +52,6 @@ external_pointer<T> make_external_prot(const string &rclass, SEXP prot, ARGS &&.
 	}
 	if (!table.empty()) {
 		auto res = make_external<ColumnRefExpression>("duckdb_expr", name, table);
-		res->alias = name; // TODO does this really make sense here?
 		return res;
 	} else {
 		return make_external<ColumnRefExpression>("duckdb_expr", name);
@@ -106,7 +109,7 @@ external_pointer<T> make_external_prot(const string &rclass, SEXP prot, ARGS &&.
 
 	cpp11::writable::list prot = {df};
 
-	auto res = sexp(make_external_prot<RelationWrapper>("duckdb_relation", prot, std::move(rel)));
+	auto res = make_external_prot<RelationWrapper>("duckdb_relation", prot, std::move(rel));
 	res.attr("df") = df;
 	return res;
 }
