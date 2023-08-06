@@ -287,6 +287,7 @@ string RApiTypes::DetectLogicalType(const LogicalType &stype, const char *caller
 	case LogicalTypeId::UUID:
 		return "character";
 	case LogicalTypeId::BLOB:
+		// Wrong in dbColumnInfo()
 		return "raw";
 	case LogicalTypeId::LIST:
 		return "list";
