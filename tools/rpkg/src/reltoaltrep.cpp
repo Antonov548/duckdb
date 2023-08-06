@@ -265,6 +265,7 @@ static R_altrep_class_t LogicalTypeToAltrepType(const LogicalType &type) {
 
 [[cpp11::register]] bool rapi_df_is_materialized(SEXP df) {
 	D_ASSERT(df);
+	// Check ALTREP-ness of row names vector
 	auto first_col = VECTOR_ELT(df, 0);
 	if (!ALTREP(first_col)) {
 		cpp11::stop("Not a lazy data frame");
