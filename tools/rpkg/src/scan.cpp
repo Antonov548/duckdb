@@ -6,6 +6,15 @@
 using namespace duckdb;
 using namespace cpp11;
 
+R_len_t GetVecSize(RType rtype, SEXP coldata) {
+	while (rtype.id() == RTypeId::STRUCT) {
+		rtype = rtype.GetStructChildTypes()[0].second;
+		coldata = VECTOR_ELT(coldata, 0);
+	}
+	// This still isn't quite accurate, but good enough for the types we support.
+	return Rf_length(coldata);
+}
+
 data_ptr_t GetColDataPtr(const RType &rtype, SEXP coldata) {
 	switch (rtype.id()) {
 	case RType::LOGICAL:
