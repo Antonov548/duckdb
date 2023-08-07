@@ -6,7 +6,7 @@
 using namespace duckdb;
 using namespace cpp11;
 
-data_ptr_t GetColDataPtr(const RType& rtype, SEXP coldata) {
+data_ptr_t GetColDataPtr(const RType &rtype, SEXP coldata) {
 	switch (rtype.id()) {
 	case RType::LOGICAL:
 		return (data_ptr_t)LOGICAL_POINTER(coldata);
