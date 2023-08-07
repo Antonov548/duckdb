@@ -334,8 +334,7 @@ static duckdb::unique_ptr<FunctionData> DataFrameScanBind(ClientContext &context
 
 		data_ptrs.push_back(GetColDataPtr(rtype, coldata));
 	}
-	// FIXME: use vec_size() equivalent
-	auto row_count = Rf_length(VECTOR_ELT(df, 0));
+	auto row_count = GetVecSize(rtypes[0], VECTOR_ELT(df, 0));
 	return make_uniq<DataFrameScanBindData>(df, row_count, rtypes, data_ptrs, input.named_parameters);
 }
 
