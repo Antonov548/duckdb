@@ -202,11 +202,11 @@ Value RApiTypes::SexpToValue(SEXP valsexp, R_len_t idx) {
 	}
 	case RTypeId::STRUCT: {
 		child_list_t<Value> child_values;
-		auto len = Rf_length(valsexp);
+		auto ncol = Rf_length(valsexp);
 		auto child_rtypes = rtype.GetStructChildTypes();
-		for (R_len_t i = 0; i < len; ++i) {
-			auto value = SexpToValue(VECTOR_ELT(valsexp, i), idx);
-			child_values.push_back(std::make_pair(child_rtypes[i].first, value));
+		for (R_len_t col = 0; col < ncol; ++col) {
+			auto value = SexpToValue(VECTOR_ELT(valsexp, col), idx);
+			child_values.push_back(std::make_pair(child_rtypes[col].first, value));
 		}
 		return Value::STRUCT(std::move(child_values));
 	}
